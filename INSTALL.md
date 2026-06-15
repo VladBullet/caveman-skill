@@ -184,6 +184,39 @@ npx -y github:JuliusBrussee/caveman -- --uninstall
 
 The global `--uninstall` also strips this file (only when it carries caveman markers — foreign files with the same name are left alone).
 
+#### Switching levels
+
+VS Code Copilot has no hook system, so caveman has two distinct level controls:
+
+**Mid-session (single chat only).** Type one of these into the chat:
+
+| Phrase | Effect |
+|---|---|
+| `/caveman lite` | Mildest compression |
+| `/caveman full` | Default |
+| `/caveman ultra` | Heaviest compression |
+| `/caveman wenyan` / `/caveman wenyan-lite` / `/caveman wenyan-ultra` | Classical-Chinese-style ultra terseness |
+| `/caveman disabled` | Drop back to normal prose |
+| `stop caveman` / `normal mode` | Same as `/caveman disabled` |
+| `talk like caveman` / `caveman mode` | Re-enable at the default level |
+
+These last for the current chat only. Opening a new chat re-reads the rule file → back to the persistent default.
+
+**Persistent default (every new chat).** Re-run the installer with `--level <name>`:
+
+```bash
+# Set the persistent default
+node bin/install.js --only vscode --level lite
+node bin/install.js --only vscode --level ultra
+node bin/install.js --only vscode --level wenyan
+
+# Fully remove the user-scope file
+node bin/install.js --only vscode --level disabled
+# (same as: node bin/install.js --only vscode --uninstall)
+```
+
+Valid `--level` values: `lite`, `full`, `ultra`, `wenyan`, `wenyan-lite`, `wenyan-ultra`, `disabled`. The installer is idempotent — re-runs only rewrite the file when the level (or the rule body itself) actually changes.
+
 > **Why a dedicated provider?** The existing `copilot` row in the matrix uses `npx skills add` + `--with-init` to drop a rule into the current repo's `.github/copilot-instructions.md`. The `vscode` provider is the user-scope counterpart — one file, no per-repo init, easy to remove. Pick whichever fits your workflow; they don't conflict if you use both.
 >
 > **Override the target dir** (for testing or unusual setups): set `CAVEMAN_VSCODE_USER_ROOT=/some/other/.copilot` before running install or uninstall.

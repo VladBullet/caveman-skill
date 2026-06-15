@@ -125,6 +125,14 @@ function parseArgs(argv) {
         opts.configDir = expandHome(v);
         break;
       }
+      case '--level': {
+        const v = argv[++i];
+        const VALID = ['lite', 'full', 'ultra', 'wenyan', 'wenyan-lite', 'wenyan-ultra', 'disabled'];
+        if (!v || v.startsWith('--')) die(`error: --level requires one of: ${VALID.join(', ')}`);
+        if (!VALID.includes(v)) die(`error: invalid --level '${v}'. valid: ${VALID.join(', ')}`);
+        opts.level = v;
+        break;
+      }
       default:
         die(`error: unknown flag: ${a}\nrun 'caveman --help' for usage`);
     }
@@ -822,16 +830,40 @@ function installVscode(ctx) {
     warn: (s) => warn(s),
   };
 
+  // --level disabled is a routed-to-uninstall signal. Removes the user-scope
+  // file (only if it carries our markers) and reports it as such.
+  if (opts.level === 'disabled') {
+    const r = VSCODE.uninstallVscode({
+      root: process.env.CAVEMAN_VSCODE_USER_ROOT || undefined,
+      dryRun: opts.dryRun,
+      log,
+    });
+    if (r.touched) {
+      results.installed.push('vscode (disabled)');
+    } else if (r.skipped) {
+      results.failed.push(['vscode', 'file exists without caveman markers — left untouched']);
+    } else {
+      note('  vscode caveman not installed — nothing to disable');
+    }
+    process.stdout.write('\n');
+    return;
+  }
+
   const r = VSCODE.installVscode({
     root: process.env.CAVEMAN_VSCODE_USER_ROOT || undefined,
     repoRoot,
+    level: opts.level,
     dryRun: opts.dryRun,
     force: opts.force,
     log,
   });
 
-  if (r.ok) results.installed.push('vscode (user-scope)');
-  else results.failed.push(['vscode', r.reason || 'install failed']);
+  if (r.ok) {
+    const tag = opts.level && opts.level !== 'full' ? ` (${opts.level})` : '';
+    results.installed.push(`vscode (user-scope)${tag}`);
+  } else {
+    results.failed.push(['vscode', r.reason || 'install failed']);
+  }
 
   process.stdout.write('\n');
 }
@@ -1318,6 +1350,11 @@ FLAGS
                         is required. The value is whitespace-tokenized.
                         Example: --with-mcp-shrink="npx @modelcontextprotocol/server-filesystem /tmp"
   --no-mcp-shrink       Skip MCP shrink. (Default.)
+  --level <name>        VS Code Copilot user-scope only (--only vscode):
+                        set the persistent default intensity. One of:
+                        lite | full | ultra | wenyan | wenyan-lite |
+                        wenyan-ultra | disabled. 'disabled' uninstalls the
+                        user-scope file. Default: full.
   --uninstall, -u       Remove caveman from this machine.
   --config-dir <path>   Claude Code config dir for hook files + settings.json.
                         Default: \$CLAUDE_CONFIG_DIR or ~/.claude. Does NOT
