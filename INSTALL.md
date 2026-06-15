@@ -48,6 +48,7 @@ If you want to install for one agent (or want to know exactly what command runs 
 | **Windsurf** | `npx skills add JuliusBrussee/caveman -a windsurf` | Per-session by default; `--with-init` for an always-on rule file |
 | **Cline** | `npx skills add JuliusBrussee/caveman -a cline` | Per-session by default; `--with-init` for an always-on rule file |
 | **GitHub Copilot** *(soft probe)* | `npx -y github:JuliusBrussee/caveman -- --only copilot --with-init` | Repo-wide instructions via `--with-init` |
+| **VS Code Copilot (user-scope)** *(soft probe)* | `npx -y github:JuliusBrussee/caveman -- --only vscode` | Yes — single file at `~/.copilot/instructions/caveman.instructions.md`, loads in every workspace |
 | **Continue** | `npx skills add JuliusBrussee/caveman -a continue` | No — say `/caveman` |
 | **Kilo Code** | `npx skills add JuliusBrussee/caveman -a kilo` | No |
 | **Roo Code** | `npx skills add JuliusBrussee/caveman -a roo` | No |
@@ -145,6 +146,48 @@ curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/src/rule
 
 `--with-init` writes the rule into every supported per-agent location it can detect (`.cursor/rules/`, `.windsurf/rules/`, `.clinerules/`, `.github/copilot-instructions.md`, `.opencode/AGENTS.md`, `AGENTS.md`). It also installs the OpenClaw workspace bootstrap (skill folder + SOUL.md marker block) when `~/.openclaw/workspace/` exists. Single source: [`src/rules/caveman-activate.md`](src/rules/caveman-activate.md).
 
+### VS Code Copilot (user-scope, every workspace)
+
+The per-repo `--with-init` writes `.github/copilot-instructions.md` into one workspace at a time. If you want caveman on for **every** workspace, every Copilot Chat session, without touching any repo:
+
+```bash
+# Install (one file, user-scope, always-on)
+node bin/install.js --only vscode
+
+# Or from a curl|bash style run
+npx -y github:JuliusBrussee/caveman -- --only vscode
+```
+
+What it touches — **exactly one file**:
+
+| Platform | Path |
+|---|---|
+| Windows | `%USERPROFILE%\.copilot\instructions\caveman.instructions.md` |
+| macOS / Linux | `~/.copilot/instructions/caveman.instructions.md` |
+
+The file has no `applyTo` key, so VS Code Copilot loads it as an always-on instruction across all workspaces. It coexists with any other `*.instructions.md` files in that folder — each one is loaded independently. The body is wrapped in `<!-- caveman-begin -->` / `<!-- caveman-end -->` markers so uninstall can find and remove it cleanly.
+
+The installer is idempotent and safe to re-run:
+
+- If the file is missing → writes it.
+- If the file is ours and identical → no-op.
+- If the file is ours but the rule body has changed (upgrade) → refreshes content in place.
+- If the file exists **without** caveman markers → refuses to overwrite. Re-run with `--force` to replace.
+
+Uninstall removes only that one file:
+
+```bash
+node bin/install.js --only vscode --uninstall
+# or, as part of the global uninstall:
+npx -y github:JuliusBrussee/caveman -- --uninstall
+```
+
+The global `--uninstall` also strips this file (only when it carries caveman markers — foreign files with the same name are left alone).
+
+> **Why a dedicated provider?** The existing `copilot` row in the matrix uses `npx skills add` + `--with-init` to drop a rule into the current repo's `.github/copilot-instructions.md`. The `vscode` provider is the user-scope counterpart — one file, no per-repo init, easy to remove. Pick whichever fits your workflow; they don't conflict if you use both.
+>
+> **Override the target dir** (for testing or unusual setups): set `CAVEMAN_VSCODE_USER_ROOT=/some/other/.copilot` before running install or uninstall.
+
 ## Verify
 
 After install, three quick checks:
@@ -185,6 +228,7 @@ What it removes:
 - The Claude Code plugin and the Gemini CLI extension (if installed).
 - The opencode native plugin (`~/.config/opencode/plugins/caveman/`, the `plugin` and `mcp.caveman-shrink` entries from `opencode.json`, our skill/agent/command files, the caveman block from `AGENTS.md`, and the opencode flag file).
 - The OpenClaw workspace skill folder and the marker-fenced block from `~/.openclaw/workspace/SOUL.md` (when present).
+- The VS Code Copilot user-scope file at `~/.copilot/instructions/caveman.instructions.md` (only when it carries our markers — other files in that folder are untouched).
 - The `.caveman-active` flag file.
 
 What it does **not** remove:
