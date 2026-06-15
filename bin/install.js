@@ -24,6 +24,7 @@ const crypto = require('crypto');
 
 const SETTINGS = require('./lib/settings');
 const OPENCLAW = require('./lib/openclaw');
+const VSCODE = require('./lib/vscode-copilot');
 const { stripOpencodeAgentTools } = require('./lib/opencode-agent');
 
 const REPO = 'JuliusBrussee/caveman';
@@ -224,6 +225,14 @@ const PROVIDERS = [
   // needed). The old `command:copilot` soft probe never fired for most users
   // because Copilot ships as an editor extension, not a CLI (issue #336).
   { id: 'copilot',    label: 'GitHub Copilot',      mech: 'npx skills add (github-copilot)', detect: 'vscode-ext:github.copilot||vscode-ext:github.copilot-chat||cursor-ext:github.copilot', profile: 'github-copilot' },
+
+  // VS Code Copilot (user-scope always-on): one file at
+  // ~/.copilot/instructions/caveman.instructions.md. No per-repo init, no
+  // `/caveman` per session. Distinct from `copilot` above (which is the
+  // per-repo npx-skills install). Soft so it only fires on `--only vscode` —
+  // we don't want every install run to silently write a user-scope file when
+  // the user might prefer the per-repo behavior.
+  { id: 'vscode',     label: 'VS Code Copilot (user-scope)', mech: 'user-scope instructions file', detect: 'vscode-ext:github.copilot||vscode-ext:github.copilot-chat', soft: true },
 
   // CLI agents — require the binary. The `||dir:~/.foo` fallbacks were the
   // main source of false positives (warp, kiro, junie etc. leave config dirs
@@ -798,6 +807,35 @@ function installOpenclaw(ctx) {
   process.stdout.write('\n');
 }
 
+// ── VS Code Copilot (user-scope) native install ───────────────────────────
+// Writes a single instructions file at ~/.copilot/instructions/caveman.instructions.md
+// that VS Code Copilot auto-loads in every workspace, every session. No
+// per-repo init required. The actual file write lives in bin/lib/vscode-copilot.js.
+function installVscode(ctx) {
+  const { say, note, warn, opts, repoRoot, results } = ctx;
+  results.detected++;
+  say('→ VS Code Copilot (user-scope) selected');
+
+  const log = {
+    write: (s) => process.stdout.write(s),
+    note: (s) => note(s),
+    warn: (s) => warn(s),
+  };
+
+  const r = VSCODE.installVscode({
+    root: process.env.CAVEMAN_VSCODE_USER_ROOT || undefined,
+    repoRoot,
+    dryRun: opts.dryRun,
+    force: opts.force,
+    log,
+  });
+
+  if (r.ok) results.installed.push('vscode (user-scope)');
+  else results.failed.push(['vscode', r.reason || 'install failed']);
+
+  process.stdout.write('\n');
+}
+
 // ── Hooks installer ────────────────────────────────────────────────────────
 // Replaces src/hooks/install.sh + src/hooks/install.ps1.
 async function installHooks(ctx) {
@@ -1188,6 +1226,22 @@ function uninstall(ctx) {
     if (r.touched) ok('  pruned caveman entries from OpenClaw workspace');
   }
 
+  // VS Code Copilot user-scope install — single file, no other state.
+  // Helper is no-op if the file doesn't exist or lacks caveman markers.
+  {
+    const log = {
+      write: (s) => process.stdout.write(s),
+      note: (s) => note(s),
+      warn: (s) => warn(s),
+    };
+    const r = VSCODE.uninstallVscode({
+      root: process.env.CAVEMAN_VSCODE_USER_ROOT || undefined,
+      dryRun: opts.dryRun,
+      log,
+    });
+    if (r.touched) ok('  removed VS Code user-scope caveman instructions');
+  }
+
   // Flag file
   const flag = path.join(configDir, '.caveman-active');
   if (fs.existsSync(flag) && !opts.dryRun) { try { fs.unlinkSync(flag); } catch (_) {} }
@@ -1343,6 +1397,7 @@ async function main() {
     if (prov.id === 'gemini')   { installGemini(ctx); continue; }
     if (prov.id === 'opencode') { installOpencode(ctx); continue; }
     if (prov.id === 'openclaw') { installOpenclaw(ctx); continue; }
+    if (prov.id === 'vscode')   { installVscode(ctx); continue; }
     if (prov.profile)           { installViaSkills(ctx, prov); continue; }
   }
 
