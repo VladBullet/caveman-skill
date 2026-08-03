@@ -86,6 +86,7 @@ caveman/
 | `src/rules/caveman-activate.md` | Always-on auto-activation rule body. Consumed by `src/tools/caveman-init.js` when a user runs `npx caveman --with-init` (per-repo IDE rule files). Edit here, not in any per-agent rule copy. |
 | `src/rules/caveman-openclaw-bootstrap.md` | Marker-fenced bootstrap snippet appended to `~/.openclaw/workspace/SOUL.md` by `bin/lib/openclaw.js`. Drives always-on caveman through the OpenClaw gateway. Must include the SENTINEL `Respond terse like smart caveman` and stay well under OpenClaw's 12K-per-bootstrap-file cap. |
 | `bin/lib/openclaw.js` | OpenClaw install/uninstall helper. Frontmatter merge (`version`, `always: true`), SOUL.md marker append/strip, idempotent. Shared by `bin/install.js` and `src/tools/caveman-init.js`. |
+| `bin/lib/vscode-copilot.js` | VS Code Copilot user-scope install/uninstall helper. Writes a single `*.instructions.md` file at `~/.copilot/instructions/caveman.instructions.md` (overridable via `CAVEMAN_VSCODE_USER_ROOT`). Marker-fenced, idempotent, refresh-on-change, refuses to overwrite foreign files without `--force`. Loaded by the `vscode` provider in `bin/install.js`. |
 | `skills/caveman-commit/SKILL.md` | Caveman commit message behavior. Fully independent skill. |
 | `skills/caveman-review/SKILL.md` | Caveman code review behavior. Fully independent skill. |
 | `skills/caveman-help/SKILL.md` | Quick-reference card. One-shot display, not a persistent mode. |
@@ -248,7 +249,8 @@ How caveman reaches each agent type:
 | Cursor | `npx skills add ... -a cursor` (default via `--only cursor`) writes the upstream skill profile; per-repo `.cursor/rules/caveman.mdc` via `--with-init` (calls `src/tools/caveman-init.js`) | Yes — always-on rule |
 | Windsurf | `npx skills add ... -a windsurf` (default via `--only windsurf`); per-repo `.windsurf/rules/caveman.md` via `--with-init` | Yes — always-on rule |
 | Cline | `npx skills add ... -a cline` (default via `--only cline`); per-repo `.clinerules/caveman.md` via `--with-init` | Yes — Cline auto-discovers `.clinerules/` |
-| Copilot | `npx skills add ... -a github-copilot` (soft probe — pass `--only copilot`); per-repo `.github/copilot-instructions.md` + `AGENTS.md` via `--with-init` | Yes — repo-wide instructions |
+| Copilot (per-repo) | `npx skills add ... -a github-copilot` (soft probe — pass `--only copilot`); per-repo `.github/copilot-instructions.md` + `AGENTS.md` via `--with-init` | Yes — repo-wide instructions |
+| VS Code Copilot (user-scope) | `node bin/install.js --only vscode` (soft probe). Writes one file at `~/.copilot/instructions/caveman.instructions.md` via `bin/lib/vscode-copilot.js`. No per-repo init, no skills CLI. Override target with `CAVEMAN_VSCODE_USER_ROOT`. | Yes — VS Code Copilot loads `*.instructions.md` (no `applyTo`) in every workspace |
 | Others (Junie, Trae, Warp, Tabnine, Mistral, Qwen, Devin, Droid, ForgeCode, Bob, Crush, iFlow, OpenHands, Qoder, Rovo Dev, Replit, Antigravity, …) | `npx skills add JuliusBrussee/caveman -a <profile>` | No — user must say `/caveman` each session |
 
 opencode reaches Tier 1 minus the statusline (opencode's TUI has no plugin-writable badge). Mode flag lives at `~/.config/opencode/.caveman-active` for any external tooling that wants to surface it.

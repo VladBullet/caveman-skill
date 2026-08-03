@@ -24,6 +24,7 @@ const crypto = require('crypto');
 
 const SETTINGS = require('./lib/settings');
 const OPENCLAW = require('./lib/openclaw');
+const VSCODE = require('./lib/vscode-copilot');
 const { stripOpencodeAgentTools } = require('./lib/opencode-agent');
 
 const REPO = 'JuliusBrussee/caveman';
@@ -123,6 +124,14 @@ function parseArgs(argv) {
         const v = argv[++i];
         if (!v || v.startsWith('--')) die('error: --config-dir requires a path');
         opts.configDir = expandHome(v);
+        break;
+      }
+      case '--level': {
+        const v = argv[++i];
+        const VALID = ['lite', 'full', 'ultra', 'wenyan', 'wenyan-lite', 'wenyan-ultra', 'disabled'];
+        if (!v || v.startsWith('--')) die(`error: --level requires one of: ${VALID.join(', ')}`);
+        if (!VALID.includes(v)) die(`error: invalid --level '${v}'. valid: ${VALID.join(', ')}`);
+        opts.level = v;
         break;
       }
       default:
@@ -225,6 +234,14 @@ const PROVIDERS = [
   // needed). The old `command:copilot` soft probe never fired for most users
   // because Copilot ships as an editor extension, not a CLI (issue #336).
   { id: 'copilot',    label: 'GitHub Copilot',      mech: 'npx skills add (github-copilot)', detect: 'vscode-ext:github.copilot||vscode-ext:github.copilot-chat||cursor-ext:github.copilot', profile: 'github-copilot' },
+
+  // VS Code Copilot (user-scope always-on): one file at
+  // ~/.copilot/instructions/caveman.instructions.md. No per-repo init, no
+  // `/caveman` per session. Distinct from `copilot` above (which is the
+  // per-repo npx-skills install). Soft so it only fires on `--only vscode` —
+  // we don't want every install run to silently write a user-scope file when
+  // the user might prefer the per-repo behavior.
+  { id: 'vscode',     label: 'VS Code Copilot (user-scope)', mech: 'user-scope instructions file', detect: 'vscode-ext:github.copilot||vscode-ext:github.copilot-chat', soft: true },
 
   // CLI agents — require the binary. The `||dir:~/.foo` fallbacks were the
   // main source of false positives (warp, kiro, junie etc. leave config dirs
@@ -909,6 +926,59 @@ function installOpenclaw(ctx) {
   process.stdout.write('\n');
 }
 
+// ── VS Code Copilot (user-scope) native install ───────────────────────────
+// Writes a single instructions file at ~/.copilot/instructions/caveman.instructions.md
+// that VS Code Copilot auto-loads in every workspace, every session. No
+// per-repo init required. The actual file write lives in bin/lib/vscode-copilot.js.
+function installVscode(ctx) {
+  const { say, note, warn, opts, repoRoot, results } = ctx;
+  results.detected++;
+  say('→ VS Code Copilot (user-scope) selected');
+
+  const log = {
+    write: (s) => process.stdout.write(s),
+    note: (s) => note(s),
+    warn: (s) => warn(s),
+  };
+
+  // --level disabled is a routed-to-uninstall signal. Removes the user-scope
+  // file (only if it carries our markers) and reports it as such.
+  if (opts.level === 'disabled') {
+    const r = VSCODE.uninstallVscode({
+      root: process.env.CAVEMAN_VSCODE_USER_ROOT || undefined,
+      dryRun: opts.dryRun,
+      log,
+    });
+    if (r.touched) {
+      results.installed.push('vscode (disabled)');
+    } else if (r.skipped) {
+      results.failed.push(['vscode', 'file exists without caveman markers — left untouched']);
+    } else {
+      note('  vscode caveman not installed — nothing to disable');
+    }
+    process.stdout.write('\n');
+    return;
+  }
+
+  const r = VSCODE.installVscode({
+    root: process.env.CAVEMAN_VSCODE_USER_ROOT || undefined,
+    repoRoot,
+    level: opts.level,
+    dryRun: opts.dryRun,
+    force: opts.force,
+    log,
+  });
+
+  if (r.ok) {
+    const tag = opts.level && opts.level !== 'full' ? ` (${opts.level})` : '';
+    results.installed.push(`vscode (user-scope)${tag}`);
+  } else {
+    results.failed.push(['vscode', r.reason || 'install failed']);
+  }
+
+  process.stdout.write('\n');
+}
+
 // ── Hooks installer ────────────────────────────────────────────────────────
 // Replaces src/hooks/install.sh + src/hooks/install.ps1.
 async function installHooks(ctx) {
@@ -1299,20 +1369,36 @@ function uninstall(ctx) {
     if (r.touched) ok('  pruned caveman entries from OpenClaw workspace');
   }
 
+  // VS Code Copilot user-scope install — single file, no other state.
+  // Helper is no-op if the file doesn't exist or lacks caveman markers.
+  {
+    const log = {
+      write: (s) => process.stdout.write(s),
+      note: (s) => note(s),
+      warn: (s) => warn(s),
+    };
+    const r = VSCODE.uninstallVscode({
+      root: process.env.CAVEMAN_VSCODE_USER_ROOT || undefined,
+      dryRun: opts.dryRun,
+      log,
+    });
+    if (r.touched) ok('  removed VS Code user-scope caveman instructions');
+
   // Hermes native install — remove the skill folders installHermes copied.
   // Honors HERMES_HOME via hermesConfigDir(); probed by the dirs we own.
-  const hermesRoot = path.join(hermesConfigDir(), 'productivity');
-  if (fs.existsSync(hermesRoot)) {
-    let prunedHermes = false;
-    for (const name of HERMES_SKILL_DIRS) {
-      const p = path.join(hermesRoot, name);
-      if (fs.existsSync(p)) {
-        if (!opts.dryRun) { try { fs.rmSync(p, { recursive: true, force: true }); } catch (_) {} }
-        note(`  removed ${p}`);
-        prunedHermes = true;
-      }
-    }
-    if (prunedHermes) ok('  pruned caveman skills from Hermes');
+  // const hermesRoot = path.join(hermesConfigDir(), 'productivity');
+  // if (fs.existsSync(hermesRoot)) {
+  //   let prunedHermes = false;
+  //   for (const name of HERMES_SKILL_DIRS) {
+  //     const p = path.join(hermesRoot, name);
+  //     if (fs.existsSync(p)) {
+  //       if (!opts.dryRun) { try { fs.rmSync(p, { recursive: true, force: true }); } catch (_) {} }
+  //       note(`  removed ${p}`);
+  //       prunedHermes = true;
+  //     }
+  //   }
+  //   if (prunedHermes) ok('  pruned caveman skills from Hermes');
+
   }
 
   // Flag file
@@ -1391,6 +1477,11 @@ FLAGS
                         is required. The value is whitespace-tokenized.
                         Example: --with-mcp-shrink="npx @modelcontextprotocol/server-filesystem /tmp"
   --no-mcp-shrink       Skip MCP shrink. (Default.)
+  --level <name>        VS Code Copilot user-scope only (--only vscode):
+                        set the persistent default intensity. One of:
+                        lite | full | ultra | wenyan | wenyan-lite |
+                        wenyan-ultra | disabled. 'disabled' uninstalls the
+                        user-scope file. Default: full.
   --uninstall, -u       Remove caveman from this machine.
   --config-dir <path>   Claude Code config dir for hook files + settings.json.
                         Default: \$CLAUDE_CONFIG_DIR or ~/.claude. Does NOT
@@ -1470,6 +1561,7 @@ async function main() {
     if (prov.id === 'gemini')   { installGemini(ctx); continue; }
     if (prov.id === 'opencode') { installOpencode(ctx); continue; }
     if (prov.id === 'openclaw') { installOpenclaw(ctx); continue; }
+    if (prov.id === 'vscode')   { installVscode(ctx); continue; }
     if (prov.id === 'hermes')   { installHermes(ctx); continue; }
     if (prov.profile)           { installViaSkills(ctx, prov); continue; }
   }

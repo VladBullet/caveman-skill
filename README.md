@@ -146,8 +146,12 @@ Six levels. Switch anytime with `/caveman <level>`. Level sticks until you chang
 | `caveman-shrink` | MCP middleware. Wraps any MCP server, compresses its tool descriptions. [npm](https://www.npmjs.com/package/caveman-shrink). |
 | `cavecrew-*` | Caveman subagents (investigator, builder, reviewer). ~60% fewer tokens than vanilla, so main context lasts longer. |
 
+
+Auto-activate every session: Claude Code, Codex, Gemini (built-in). Cursor / Windsurf / Cline / Copilot get always-on rule files via `--with-init` (per-repo) or `--only vscode` (user-scope, every workspace — one file at `~/.copilot/instructions/caveman.instructions.md`). Other agents trigger with `/caveman` per session. Full feature matrix in [INSTALL.md](./INSTALL.md#what-you-get).
+
 > [!TIP]
 > On Claude Code the statusline shows `[CAVEMAN] ⛏ 12.4k` — that's your lifetime tokens saved, updated on every `/caveman-stats`. Silence it with `CAVEMAN_STATUSLINE_SAVINGS=0`.
+
 
 ## Benchmarks
 
