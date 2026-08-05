@@ -74,8 +74,8 @@ for (const name of DOCUMENTED_COMMANDS) {
 
   test(`#571 commands/${name}.md has YAML frontmatter with a non-empty description`, () => {
     const body = fs.readFileSync(path.join(COMMANDS_DIR, `${name}.md`), 'utf8');
-    assert.ok(body.startsWith('---\n'), `${name}.md must start with YAML frontmatter (---)`);
-    const fm = body.match(/^---\n([\s\S]*?)\n---/);
+    assert.ok(/^---\r?\n/.test(body), `${name}.md must start with YAML frontmatter (---)`);
+    const fm = body.match(/^---\r?\n([\s\S]*?)\r?\n---/);
     assert.ok(fm, `${name}.md frontmatter must be closed with ---`);
     const desc = fm[1].match(/^description:\s*(.+)$/m);
     assert.ok(desc && desc[1].trim().length > 0, `${name}.md must declare a non-empty description`);
@@ -91,7 +91,7 @@ for (const name of DOCUMENTED_COMMANDS) {
 
 test('#571 caveman-stats.md body is intercepted by the mode-tracker regex', () => {
   const body = fs.readFileSync(path.join(COMMANDS_DIR, 'caveman-stats.md'), 'utf8');
-  const prompt = body.replace(/^---\n[\s\S]*?\n---\n/, '').replace(/\$ARGUMENTS/g, '').trim();
+  const prompt = body.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, '').replace(/\$ARGUMENTS/g, '').trim();
   assert.match(
     prompt,
     HOOK_STATS_REGEX,

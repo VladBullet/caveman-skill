@@ -337,8 +337,15 @@ function installVscode({ root, repoRoot, level, promptsDir, dryRun = false, forc
 
   if (dryRun) {
     log.note(`  would write ${target}`);
+    try {
+      installPrompts({ promptsDir, repoRoot, dryRun, force, log });
+    } catch (e) {
+      log.warn(`  prompt files: ${e.message}`);
+    }
     return { ok: true, dryRun: true, path: target };
   }
+
+  let result = { ok: true, path: target };
 
   if (fs.existsSync(target) && !force) {
     const existing = readIfExists(target);
@@ -348,19 +355,21 @@ function installVscode({ root, repoRoot, level, promptsDir, dryRun = false, forc
       // level on most filesystems; skip the write if bytes are identical.
       if (existing === content) {
         log.note(`  ${target} already up to date`);
-        return { ok: true, alreadyInstalled: true, path: target };
+        result = { ok: true, alreadyInstalled: true, path: target };
+      } else {
+        fs.writeFileSync(target, content, { mode: 0o644 });
+        log.write(`  refreshed ${target}\n`);
+        result = { ok: true, refreshed: true, path: target };
       }
-      fs.writeFileSync(target, content, { mode: 0o644 });
-      log.write(`  refreshed ${target}\n`);
-      return { ok: true, refreshed: true, path: target };
+    } else {
+      log.warn(`  ${target} exists without caveman markers — refusing to overwrite. Re-run with --force to replace.`);
+      return { ok: false, reason: 'file exists without markers' };
     }
-    log.warn(`  ${target} exists without caveman markers — refusing to overwrite. Re-run with --force to replace.`);
-    return { ok: false, reason: 'file exists without markers' };
+  } else {
+    fs.mkdirSync(path.dirname(target), { recursive: true });
+    fs.writeFileSync(target, content, { mode: 0o644 });
+    log.write(`  installed: ${target}\n`);
   }
-
-  fs.mkdirSync(path.dirname(target), { recursive: true });
-  fs.writeFileSync(target, content, { mode: 0o644 });
-  log.write(`  installed: ${target}\n`);
 
   // Best-effort prompt-file install. Failures here don't fail the whole
   // vscode install — the always-on instructions file is the primary win;
@@ -371,7 +380,7 @@ function installVscode({ root, repoRoot, level, promptsDir, dryRun = false, forc
     log.warn(`  prompt files: ${e.message}`);
   }
 
-  return { ok: true, path: target };
+  return result;
 }
 
 function uninstallVscode({ root, promptsDir, dryRun = false, log = noopLog() } = {}) {

@@ -25,7 +25,7 @@ const { stripOpencodeAgentTools } = requireCjs(path.join(REPO_ROOT, 'bin', 'lib'
 const SHIPPED_AGENT_FILES = ['cavecrew-investigator.md', 'cavecrew-builder.md', 'cavecrew-reviewer.md'];
 
 function frontmatter(content) {
-  const m = content.match(/^---\n([\s\S]*?)\n---\n/);
+  const m = content.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n/);
   assert.ok(m, 'frontmatter present');
   return m[1];
 }
@@ -138,8 +138,8 @@ test('all shipped cavecrew agent files become opencode-safe after transform (GRE
     assert.match(fm, /^name: cavecrew-/m, `${f}: name field preserved`);
     assert.match(fm, /^description:/m, `${f}: description field preserved`);
 
-    const bodyOut = out.replace(/^---\n[\s\S]*?\n---\n/, '');
-    const bodyIn = src.replace(/^---\n[\s\S]*?\n---\n/, '');
+    const bodyOut = out.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, '');
+    const bodyIn = src.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, '');
     assert.equal(bodyOut, bodyIn, `${f}: body must be byte-identical`);
   }
 });

@@ -1386,18 +1386,19 @@ function uninstall(ctx) {
 
   // Hermes native install — remove the skill folders installHermes copied.
   // Honors HERMES_HOME via hermesConfigDir(); probed by the dirs we own.
-  // const hermesRoot = path.join(hermesConfigDir(), 'productivity');
-  // if (fs.existsSync(hermesRoot)) {
-  //   let prunedHermes = false;
-  //   for (const name of HERMES_SKILL_DIRS) {
-  //     const p = path.join(hermesRoot, name);
-  //     if (fs.existsSync(p)) {
-  //       if (!opts.dryRun) { try { fs.rmSync(p, { recursive: true, force: true }); } catch (_) {} }
-  //       note(`  removed ${p}`);
-  //       prunedHermes = true;
-  //     }
-  //   }
-  //   if (prunedHermes) ok('  pruned caveman skills from Hermes');
+  const hermesRoot = path.join(hermesConfigDir(), 'productivity');
+  if (fs.existsSync(hermesRoot)) {
+    let prunedHermes = false;
+    for (const name of HERMES_SKILL_DIRS) {
+      const p = path.join(hermesRoot, name);
+      if (fs.existsSync(p)) {
+        if (!opts.dryRun) { try { fs.rmSync(p, { recursive: true, force: true }); } catch (_) {} }
+        note(`  removed ${p}`);
+        prunedHermes = true;
+      }
+    }
+    if (prunedHermes) ok('  pruned caveman skills from Hermes');
+  }
 
   }
 

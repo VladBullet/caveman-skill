@@ -99,7 +99,7 @@ test('--config-dir expands ~ to home directory', async () => {
   // positive assertion when claude isn't on PATH on the runner.
   if (/Claude Code detected/.test(r.stdout)) {
     const { homedir } = await import('node:os');
-    assert.match(r.stdout, new RegExp(homedir().replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '/' + suffix));
+    assert.match(r.stdout, new RegExp(homedir().replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '[\\\\/]' + suffix));
   }
 });
 
