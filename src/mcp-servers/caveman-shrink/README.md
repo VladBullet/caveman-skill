@@ -51,7 +51,7 @@ By design, v1 is conservative:
 
 ## Status
 
-Pre-1.0 — the compression rules and field set may change. The plugin is part of the [caveman ecosystem](https://github.com/JuliusBrussee/caveman); see the parent repo for the full skill suite (`caveman`, `cavemem`, `cavekit`, `cavecrew`, `caveman-stats`, `caveman-init`).
+Pre-1.0 — the compression rules and field set may change. The plugin is part of the [caveman ecosystem](https://github.com/VladBullet/caveman-skill); see the parent repo for the full skill suite (`caveman`, `cavemem`, `cavekit`, `cavecrew`, `caveman-stats`, `caveman-init`).
 
 ## License
 

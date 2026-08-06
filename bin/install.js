@@ -8,7 +8,7 @@
 //
 // Distribution:
 //   Local clone: node bin/install.js [flags]
-//   curl|bash:   delegated from install.sh shim → npx -y github:JuliusBrussee/caveman -- [flags]
+//   curl|bash:   delegated from install.sh shim → npx -y github:VladBullet/caveman-skill -- [flags]
 //   Windows:     pwsh install.ps1 [flags] → same npx delegation
 //
 // Pure stdlib, zero npm runtime deps.
@@ -27,7 +27,7 @@ const OPENCLAW = require('./lib/openclaw');
 const VSCODE = require('./lib/vscode-copilot');
 const { stripOpencodeAgentTools } = require('./lib/opencode-agent');
 
-const REPO = 'JuliusBrussee/caveman';
+const REPO = 'VladBullet/caveman-skill';
 // Pin remote fetches to an immutable release tag, not the moving `main`
 // branch (issue #261). A push to main must never silently change what a
 // curl|bash / detached-script install downloads and executes. Bump this to
@@ -1453,7 +1453,7 @@ function printHelp() {
   process.stdout.write(`caveman installer — detects your agents and installs caveman for each one.
 
 USAGE
-  npx -y github:JuliusBrussee/caveman -- [flags]
+  npx -y github:VladBullet/caveman-skill -- [flags]
   node bin/install.js [flags]
   bash install.sh [flags]              # shim → npx
   pwsh install.ps1 [flags]             # shim → npx
@@ -1495,10 +1495,10 @@ FLAGS
   -h, --help            Show this help.
 
 EXAMPLES
-  npx -y github:JuliusBrussee/caveman                        # default install
-  npx -y github:JuliusBrussee/caveman -- --all               # all the trimmings
-  npx -y github:JuliusBrussee/caveman -- --only claude --no-mcp-shrink
-  npx -y github:JuliusBrussee/caveman -- --uninstall
+  npx -y github:VladBullet/caveman-skill                     # default install
+  npx -y github:VladBullet/caveman-skill -- --all            # all the trimmings
+  npx -y github:VladBullet/caveman-skill -- --only claude --no-mcp-shrink
+  npx -y github:VladBullet/caveman-skill -- --uninstall
 
   Issues: https://github.com/${REPO}/issues
 `);

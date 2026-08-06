@@ -12,10 +12,10 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/JuliusBrussee/caveman/stargazers"><img src="https://img.shields.io/github/stars/JuliusBrussee/caveman?style=flat&color=yellow" alt="Stars"></a>
+  <a href="https://github.com/VladBullet/caveman-skill/stargazers"><img src="https://img.shields.io/github/stars/VladBullet/caveman-skill?style=flat&color=yellow" alt="Stars"></a>
   <a href="./INSTALL.md"><img src="https://img.shields.io/badge/works_with-30%2B_agents-orange?style=flat" alt="30+ agents"></a>
-  <a href="https://github.com/JuliusBrussee/caveman/commits/main"><img src="https://img.shields.io/github/last-commit/JuliusBrussee/caveman?style=flat" alt="Last commit"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/JuliusBrussee/caveman?style=flat" alt="License"></a>
+  <a href="https://github.com/VladBullet/caveman-skill/commits/main"><img src="https://img.shields.io/github/last-commit/VladBullet/caveman-skill?style=flat" alt="Last commit"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/VladBullet/caveman-skill?style=flat" alt="License"></a>
 </p>
 
 <p align="center">
@@ -84,12 +84,12 @@ Caveman no make brain smaller. Caveman make *mouth* smaller. Shrinks what the ag
 
 ```bash
 # macOS · Linux · WSL · Git Bash
-curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/VladBullet/caveman-skill/main/install.sh | bash
 ```
 
 ```powershell
 # Windows · PowerShell 5.1+
-irm https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/VladBullet/caveman-skill/main/install.ps1 | iex
 ```
 
 ~30 seconds. Needs Node ≥18. Skips agents you no have. Safe to re-run.
@@ -106,13 +106,13 @@ Every agent has its own path (plugin, extension, rule file, or `npx skills add`)
 
 ```bash
 # Claude Code plugin
-claude plugin marketplace add JuliusBrussee/caveman && claude plugin install caveman@caveman
+claude plugin marketplace add VladBullet/caveman-skill && claude plugin install caveman@caveman
 
 # Gemini CLI extension
-gemini extensions install https://github.com/JuliusBrussee/caveman
+gemini extensions install https://github.com/VladBullet/caveman-skill
 
 # Cursor / Windsurf / Cline / Codex / 30+ more, via the skills registry
-npx skills add JuliusBrussee/caveman -a cursor
+npx skills add VladBullet/caveman-skill -a cursor
 ```
 
 **Install broke?** Open your agent in this repo and say: *"Read CLAUDE.md and INSTALL.md, install caveman for me."* Agent read repo, agent fix own brain. Snake eat tail.
@@ -218,7 +218,7 @@ Five tools, one idea: **agent do more with less.**
 
 | Repo | What it shrinks |
 |------|------|
-| [**caveman**](https://github.com/JuliusBrussee/caveman) *(you here)* | What the agent **says** |
+| [**caveman**](https://github.com/VladBullet/caveman-skill) *(you here)* | What the agent **says** |
 | [**caveman-code**](https://github.com/JuliusBrussee/caveman-code) | The **whole agent**, end to end |
 | [**cavemem**](https://github.com/JuliusBrussee/cavemem) | What the agent **remembers**, across sessions |
 | [**cavekit**](https://github.com/JuliusBrussee/cavekit) | The **build loop** — spec-driven, no guessing |
@@ -255,7 +255,7 @@ npx skills@latest add JuliusBrussee/skills
 Same installer, scoped to one agent:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh | bash -s -- --only openclaw
+curl -fsSL https://raw.githubusercontent.com/VladBullet/caveman-skill/main/install.sh | bash -s -- --only openclaw
 ```
 
 Two things happen, no more: a caveman skill lands in the workspace, and a tiny marker-fenced block is appended to `SOUL.md` (OpenClaw injects it every turn, so the lobster is terse from message one — no `/caveman` per session). Custom path? `OPENCLAW_WORKSPACE=/your/path`. Uninstall with the same line plus `--uninstall`; your other workspace content stays untouched. Lobster claw still sharp. Lobster mouth now small.
@@ -319,7 +319,7 @@ Caveman save you token, save you money. Star cost zero. Fair trade. ⭐
 <a href="./docs/HONEST-NUMBERS.md">Honest numbers</a> ·
 <a href="./CONTRIBUTING.md">Contributing</a> ·
 <a href="./CLAUDE.md">Maintainer guide</a> ·
-<a href="https://github.com/JuliusBrussee/caveman/issues">Issues</a>
+<a href="https://github.com/VladBullet/caveman-skill/issues">Issues</a>
 <br>
 <strong>Also by Julius Brussee:</strong>
 <a href="https://github.com/JuliusBrussee/revu-swift">Revu</a> — local-first macOS study app with FSRS spaced repetition (<a href="https://revu.cards">revu.cards</a>)

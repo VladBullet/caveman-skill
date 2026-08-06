@@ -6,8 +6,8 @@
     "name": "Julius Brussee",
     "url": "https://github.com/JuliusBrussee"
   },
-  "homepage": "https://github.com/JuliusBrussee/caveman",
-  "repository": "https://github.com/JuliusBrussee/caveman",
+  "homepage": "https://github.com/VladBullet/caveman-skill",
+  "repository": "https://github.com/VladBullet/caveman-skill",
   "license": "MIT",
   "keywords": [
     "productivity",
@@ -25,9 +25,9 @@
     "capabilities": [
       "Write"
     ],
-    "websiteURL": "https://github.com/JuliusBrussee/caveman",
-    "privacyPolicyURL": "https://github.com/JuliusBrussee/caveman/blob/main/README.md",
-    "termsOfServiceURL": "https://github.com/JuliusBrussee/caveman/blob/main/LICENSE",
+    "websiteURL": "https://github.com/VladBullet/caveman-skill",
+    "privacyPolicyURL": "https://github.com/VladBullet/caveman-skill/blob/main/README.md",
+    "termsOfServiceURL": "https://github.com/VladBullet/caveman-skill/blob/main/LICENSE",
     "defaultPrompt": [
       "Use caveman mode. Cut filler. Keep technical accuracy."
     ],
