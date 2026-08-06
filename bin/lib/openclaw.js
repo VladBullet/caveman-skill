@@ -203,7 +203,7 @@ function installOpenclaw({ workspace, repoRoot, dryRun = false, force = false, l
   const skillBody = loadSkillBody(repoRoot);
   if (!skillBody) {
     log.warn('  openclaw install requires the caveman repo on disk (skills/caveman/SKILL.md missing).');
-    log.note('  Re-run from a clone or via `npx -y github:JuliusBrussee/caveman -- --only openclaw`.');
+    log.note('  Re-run from a clone or via `npx -y github:VladBullet/caveman-skill -- --only openclaw`.');
     return { ok: false, reason: 'repo not available' };
   }
   const snippet = loadBootstrapSnippet(repoRoot);

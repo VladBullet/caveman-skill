@@ -9,16 +9,16 @@ If just want it to work, run the one-liner. If want to know what gets touched, s
 **macOS / Linux / WSL / Git Bash**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/VladBullet/caveman-skill/main/install.sh | bash
 ```
 
 **Windows (PowerShell 5.1+)**
 
 ```powershell
-irm https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/VladBullet/caveman-skill/main/install.ps1 | iex
 ```
 
-> Piping a script straight into a shell runs it sight-unseen. If you'd rather read it first, download then run: `curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh -o install.sh` (review it) `&& bash install.sh`. The installer downloads hook files from a pinned release tag and verifies them against a committed SHA-256 manifest before writing.
+> Piping a script straight into a shell runs it sight-unseen. If you'd rather read it first, download then run: `curl -fsSL https://raw.githubusercontent.com/VladBullet/caveman-skill/main/install.sh -o install.sh` (review it) `&& bash install.sh`. The installer downloads hook files from a pinned release tag and verifies them against a committed SHA-256 manifest before writing.
 
 What it does:
 
@@ -30,7 +30,7 @@ What it does:
 Want to preview before installing? Use `--dry-run`:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh | bash -s -- --dry-run
+curl -fsSL https://raw.githubusercontent.com/VladBullet/caveman-skill/main/install.sh | bash -s -- --dry-run
 ```
 
 ## Per-agent install
@@ -39,42 +39,42 @@ If you want to install for one agent (or want to know exactly what command runs 
 
 | Agent | Install command | Auto-activates? |
 |---|---|:-:|
-| **Claude Code** | `claude plugin marketplace add JuliusBrussee/caveman && claude plugin install caveman@caveman` | Yes |
-| **Gemini CLI** | `gemini extensions install https://github.com/JuliusBrussee/caveman` | Yes |
-| **opencode** | `node bin/install.js --only opencode` *(or `npx -y github:JuliusBrussee/caveman -- --only opencode`)* | Yes (plugin + AGENTS.md) |
-| **OpenClaw** | `npx -y github:JuliusBrussee/caveman -- --only openclaw` | Yes (workspace skill + SOUL.md) |
-| **Hermes Agent** | `npx -y github:JuliusBrussee/caveman -- --only hermes` *(or `node bin/install.js --only hermes` from a clone)* | Yes (native skills, enabled on load) |
-| **Codex CLI** | `npx skills add JuliusBrussee/caveman -a codex` | Per-session: `/caveman` |
-| **Cursor** | `npx skills add JuliusBrussee/caveman -a cursor` | Per-session by default; `--with-init` for an always-on rule file |
-| **Windsurf** | `npx skills add JuliusBrussee/caveman -a windsurf` | Per-session by default; `--with-init` for an always-on rule file |
-| **Cline** | `npx skills add JuliusBrussee/caveman -a cline` | Per-session by default; `--with-init` for an always-on rule file |
-| **GitHub Copilot** *(soft probe)* | `npx -y github:JuliusBrussee/caveman -- --only copilot --with-init` | Repo-wide instructions via `--with-init` |
-| **VS Code Copilot (user-scope)** *(soft probe)* | `npx -y github:JuliusBrussee/caveman -- --only vscode` | Yes — single file at `~/.copilot/instructions/caveman.instructions.md`, loads in every workspace |
-| **Continue** | `npx skills add JuliusBrussee/caveman -a continue` | No — say `/caveman` |
-| **Kilo Code** | `npx skills add JuliusBrussee/caveman -a kilo` | No |
-| **Roo Code** | `npx skills add JuliusBrussee/caveman -a roo` | No |
-| **Augment Code** | `npx skills add JuliusBrussee/caveman -a augment` | No |
-| **Aider Desk** | `npx skills add JuliusBrussee/caveman -a aider-desk` | No |
-| **Sourcegraph Amp** | `npx skills add JuliusBrussee/caveman -a amp` | No |
-| **IBM Bob** | `npx skills add JuliusBrussee/caveman -a bob` | No |
-| **Crush** | `npx skills add JuliusBrussee/caveman -a crush` | No |
-| **Devin (terminal)** | `npx skills add JuliusBrussee/caveman -a devin` | No |
-| **Droid (Factory)** | `npx skills add JuliusBrussee/caveman -a droid` | No |
-| **ForgeCode** | `npx skills add JuliusBrussee/caveman -a forgecode` | No |
-| **Block Goose** | `npx skills add JuliusBrussee/caveman -a goose` | No |
-| **iFlow CLI** | `npx skills add JuliusBrussee/caveman -a iflow-cli` | No |
-| **Kiro CLI** | `npx skills add JuliusBrussee/caveman -a kiro-cli` | No |
-| **Mistral Vibe** | `npx skills add JuliusBrussee/caveman -a mistral-vibe` | No |
-| **OpenHands** | `npx skills add JuliusBrussee/caveman -a openhands` | No |
-| **Qwen Code** | `npx skills add JuliusBrussee/caveman -a qwen-code` | No |
-| **Atlassian Rovo Dev** | `npx skills add JuliusBrussee/caveman -a rovodev` | No |
-| **Tabnine CLI** | `npx skills add JuliusBrussee/caveman -a tabnine-cli` | No |
-| **Trae** | `npx skills add JuliusBrussee/caveman -a trae` | No |
-| **Warp** | `npx skills add JuliusBrussee/caveman -a warp` | No |
-| **Replit Agent** | `npx skills add JuliusBrussee/caveman -a replit` | No |
-| **JetBrains Junie** *(soft probe)* | `npx skills add JuliusBrussee/caveman -a junie` | No |
-| **Qoder** *(soft probe)* | `npx skills add JuliusBrussee/caveman -a qoder` | No |
-| **Google Antigravity** *(soft probe)* | `npx skills add JuliusBrussee/caveman -a antigravity` | No |
+| **Claude Code** | `claude plugin marketplace add VladBullet/caveman-skill && claude plugin install caveman@caveman` | Yes |
+| **Gemini CLI** | `gemini extensions install https://github.com/VladBullet/caveman-skill` | Yes |
+| **opencode** | `node bin/install.js --only opencode` *(or `npx -y github:VladBullet/caveman-skill -- --only opencode`)* | Yes (plugin + AGENTS.md) |
+| **OpenClaw** | `npx -y github:VladBullet/caveman-skill -- --only openclaw` | Yes (workspace skill + SOUL.md) |
+| **Hermes Agent** | `npx -y github:VladBullet/caveman-skill -- --only hermes` *(or `node bin/install.js --only hermes` from a clone)* | Yes (native skills, enabled on load) |
+| **Codex CLI** | `npx skills add VladBullet/caveman-skill -a codex` | Per-session: `/caveman` |
+| **Cursor** | `npx skills add VladBullet/caveman-skill -a cursor` | Per-session by default; `--with-init` for an always-on rule file |
+| **Windsurf** | `npx skills add VladBullet/caveman-skill -a windsurf` | Per-session by default; `--with-init` for an always-on rule file |
+| **Cline** | `npx skills add VladBullet/caveman-skill -a cline` | Per-session by default; `--with-init` for an always-on rule file |
+| **GitHub Copilot** *(soft probe)* | `npx -y github:VladBullet/caveman-skill -- --only copilot --with-init` | Repo-wide instructions via `--with-init` |
+| **VS Code Copilot (user-scope)** *(soft probe)* | `npx -y github:VladBullet/caveman-skill -- --only vscode` | Yes — single file at `~/.copilot/instructions/caveman.instructions.md`, loads in every workspace |
+| **Continue** | `npx skills add VladBullet/caveman-skill -a continue` | No — say `/caveman` |
+| **Kilo Code** | `npx skills add VladBullet/caveman-skill -a kilo` | No |
+| **Roo Code** | `npx skills add VladBullet/caveman-skill -a roo` | No |
+| **Augment Code** | `npx skills add VladBullet/caveman-skill -a augment` | No |
+| **Aider Desk** | `npx skills add VladBullet/caveman-skill -a aider-desk` | No |
+| **Sourcegraph Amp** | `npx skills add VladBullet/caveman-skill -a amp` | No |
+| **IBM Bob** | `npx skills add VladBullet/caveman-skill -a bob` | No |
+| **Crush** | `npx skills add VladBullet/caveman-skill -a crush` | No |
+| **Devin (terminal)** | `npx skills add VladBullet/caveman-skill -a devin` | No |
+| **Droid (Factory)** | `npx skills add VladBullet/caveman-skill -a droid` | No |
+| **ForgeCode** | `npx skills add VladBullet/caveman-skill -a forgecode` | No |
+| **Block Goose** | `npx skills add VladBullet/caveman-skill -a goose` | No |
+| **iFlow CLI** | `npx skills add VladBullet/caveman-skill -a iflow-cli` | No |
+| **Kiro CLI** | `npx skills add VladBullet/caveman-skill -a kiro-cli` | No |
+| **Mistral Vibe** | `npx skills add VladBullet/caveman-skill -a mistral-vibe` | No |
+| **OpenHands** | `npx skills add VladBullet/caveman-skill -a openhands` | No |
+| **Qwen Code** | `npx skills add VladBullet/caveman-skill -a qwen-code` | No |
+| **Atlassian Rovo Dev** | `npx skills add VladBullet/caveman-skill -a rovodev` | No |
+| **Tabnine CLI** | `npx skills add VladBullet/caveman-skill -a tabnine-cli` | No |
+| **Trae** | `npx skills add VladBullet/caveman-skill -a trae` | No |
+| **Warp** | `npx skills add VladBullet/caveman-skill -a warp` | No |
+| **Replit Agent** | `npx skills add VladBullet/caveman-skill -a replit` | No |
+| **JetBrains Junie** *(soft probe)* | `npx skills add VladBullet/caveman-skill -a junie` | No |
+| **Qoder** *(soft probe)* | `npx skills add VladBullet/caveman-skill -a qoder` | No |
+| **Google Antigravity** *(soft probe)* | `npx skills add VladBullet/caveman-skill -a antigravity` | No |
 
 "Soft probe" = installer won't auto-detect these without `--only <id>` because there's no reliable always-on signal (Copilot subscription state is auth-gated; the others have no CLI / config-dir-only). Pass the flag when you want them.
 
@@ -88,7 +88,7 @@ For "auto-activates? No" agents, type `/caveman` once per session (or use natura
 bash install.sh --list             # macOS / Linux / WSL, from a local clone
 pwsh install.ps1 --list            # Windows / PowerShell, from a local clone
 node bin/install.js --list         # any platform, from a local clone
-npx -y github:JuliusBrussee/caveman -- --list   # no clone needed
+npx -y github:VladBullet/caveman-skill -- --list   # no clone needed
 ```
 
 Each row prints the agent id, profile slug (where applicable), and whether it was auto-detected on your machine. Full agent matrix (with detection rules) is also defined in `bin/install.js` under the `PROVIDERS` array.
@@ -99,8 +99,8 @@ If you'd rather see exactly what runs:
 
 ```bash
 # Clone the repo
-git clone https://github.com/JuliusBrussee/caveman.git
-cd caveman
+git clone https://github.com/VladBullet/caveman-skill.git
+cd caveman-skill
 
 # Preview every command the installer would run
 node bin/install.js --dry-run --all
@@ -141,7 +141,7 @@ For agents without a hook system (Cursor, Windsurf, Cline, Copilot, and friends)
 node bin/install.js --with-init
 
 # Or pull the rule body straight in (manual)
-curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/src/rules/caveman-activate.md \
+curl -fsSL https://raw.githubusercontent.com/VladBullet/caveman-skill/main/src/rules/caveman-activate.md \
   > .cursor/rules/caveman.mdc   # or .windsurf/rules/caveman.md, .clinerules/caveman.md, .github/copilot-instructions.md
 ```
 
@@ -156,7 +156,7 @@ The per-repo `--with-init` writes `.github/copilot-instructions.md` into one wor
 node bin/install.js --only vscode
 
 # Or from a curl|bash style run
-npx -y github:JuliusBrussee/caveman -- --only vscode
+npx -y github:VladBullet/caveman-skill -- --only vscode
 ```
 
 What it touches — **exactly one file**:
@@ -180,7 +180,7 @@ Uninstall removes only that one file:
 ```bash
 node bin/install.js --only vscode --uninstall
 # or, as part of the global uninstall:
-npx -y github:JuliusBrussee/caveman -- --uninstall
+npx -y github:VladBullet/caveman-skill -- --uninstall
 ```
 
 The global `--uninstall` also strips this file (only when it carries caveman markers — foreign files with the same name are left alone).
@@ -252,7 +252,7 @@ Statusline should show `[CAVEMAN]` (orange) at the bottom of Claude Code. After 
 ## Uninstall
 
 ```bash
-npx -y github:JuliusBrussee/caveman -- --uninstall
+npx -y github:VladBullet/caveman-skill -- --uninstall
 ```
 
 What it removes:
@@ -280,7 +280,7 @@ Open your agent in this repo and say:
 
 Agent read repo. Agent run install. Caveman make agent talk less — agent first job is install caveman to talk less. Snake eat tail.
 
-Still broken? [Open an issue](https://github.com/JuliusBrussee/caveman/issues).
+Still broken? [Open an issue](https://github.com/VladBullet/caveman-skill/issues).
 
 **"I ran the installer but Claude Code isn't talking caveman."**
 
@@ -335,4 +335,4 @@ No telemetry. No analytics. Run from a clone or via npx, the installer's own cod
 
 ---
 
-Stuck? Open an issue: <https://github.com/JuliusBrussee/caveman/issues>
+Stuck? Open an issue: <https://github.com/VladBullet/caveman-skill/issues>

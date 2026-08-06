@@ -3,10 +3,10 @@
   "version": "0.1.1",
   "description": "MCP proxy that compresses prose fields (tool descriptions, etc.) using caveman rules. Same accuracy, fewer context tokens.",
   "license": "MIT",
-  "homepage": "https://github.com/JuliusBrussee/caveman",
+  "homepage": "https://github.com/VladBullet/caveman-skill",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JuliusBrussee/caveman.git",
+    "url": "git+https://github.com/VladBullet/caveman-skill.git",
     "directory": "src/mcp-servers/caveman-shrink"
   },
   "author": "Julius Brussee",

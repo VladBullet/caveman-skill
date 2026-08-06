@@ -2,7 +2,7 @@
 # caveman — one-command hook installer for Claude Code
 # Installs: SessionStart hook (auto-load rules) + UserPromptSubmit hook (mode tracking)
 # Usage: bash src/hooks/install.sh
-#   or:  bash <(curl -s https://raw.githubusercontent.com/JuliusBrussee/caveman/main/src/hooks/install.sh)
+#   or:  bash <(curl -s https://raw.githubusercontent.com/VladBullet/caveman-skill/main/src/hooks/install.sh)
 #   or:  bash src/hooks/install.sh --force   (re-install over existing hooks)
 set -e
 
@@ -35,7 +35,7 @@ fi
 CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
 HOOKS_DIR="$CLAUDE_DIR/hooks"
 SETTINGS="$CLAUDE_DIR/settings.json"
-REPO_URL="https://raw.githubusercontent.com/JuliusBrussee/caveman/main/hooks"
+REPO_URL="https://raw.githubusercontent.com/VladBullet/caveman-skill/main/hooks"
 
 HOOK_FILES=("package.json" "caveman-config.js" "caveman-activate.js" "caveman-mode-tracker.js" "caveman-stats.js" "caveman-statusline.sh" "cavecrew-model-overrides.js")
 
