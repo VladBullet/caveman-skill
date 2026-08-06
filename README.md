@@ -20,6 +20,7 @@
 
 <p align="center">
   <a href="#before--after">See it</a> ·
+  <a href="#vs-code-copilot-user-scope">VS Code</a> ·
   <a href="#install">Install</a> ·
   <a href="#pick-your-grunt">Levels</a> ·
   <a href="#what-you-get">What you get</a> ·
@@ -77,6 +78,39 @@ Same fix. Third of the words. Nothing technical lost.
 ```
 
 Caveman no make brain smaller. Caveman make *mouth* smaller. Shrinks what the agent **says**, not what it knows.
+
+## VS Code Copilot (user-scope)
+
+**Just want caveman in VS Code Copilot Chat? One command. No clone. No repo files touched.**
+
+```bash
+npx -y github:VladBullet/caveman-skill -- --only vscode
+```
+
+Needs Node ≥ 18. Nothing else.
+
+What you get:
+
+- **Always on, every workspace.** One file at `~/.copilot/instructions/caveman.instructions.md` (Windows: `%USERPROFILE%\.copilot\instructions\`). No `applyTo`, so Copilot loads it in every chat, every repo. No per-project setup, no `/caveman` each session.
+- **Slash commands.** Six prompt files land in your VS Code user prompts folder — `/caveman`, `/caveman-commit`, `/caveman-review`, `/caveman-compress`, `/caveman-help`, `/caveman-stats`.
+
+Pick a default level:
+
+```bash
+npx -y github:VladBullet/caveman-skill -- --only vscode --level ultra
+```
+
+`lite` · `full` *(default)* · `ultra` · `wenyan` · `wenyan-lite` · `wenyan-ultra`. Reload the VS Code window after install.
+
+Off again:
+
+```bash
+npx -y github:VladBullet/caveman-skill -- --only vscode --uninstall
+```
+
+Removes only the files it wrote. Your own `*.instructions.md` and `*.prompt.md` files are left alone. Full detail in **[INSTALL.md](./INSTALL.md#vs-code-copilot-user-scope-every-workspace)**.
+
+> Want caveman on *every* agent on your machine, not just VS Code? Keep reading.
 
 ## Install
 
