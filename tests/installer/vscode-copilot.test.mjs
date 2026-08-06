@@ -14,7 +14,7 @@ import { fileURLToPath } from 'node:url';
 const require = createRequire(import.meta.url);
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(HERE, '..', '..');
-const HELPER = require(path.join(REPO_ROOT, 'bin', 'lib', 'vscode-copilot.js'));
+const HELPER = require(path.join(REPO_ROOT, 'cli', 'lib', 'vscode-copilot.js'));
 
 function makeTmp() {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'caveman-vscode-'));
@@ -153,7 +153,7 @@ test('installer --list includes vscode row', () => {
   // Smoke test against the actual installer to make sure the PROVIDERS edit
   // didn't break the matrix render.
   const { spawnSync } = require('node:child_process');
-  const r = spawnSync('node', [path.join(REPO_ROOT, 'bin', 'install.js'), '--list'], { encoding: 'utf8' });
+  const r = spawnSync('node', [path.join(REPO_ROOT, 'cli', 'install.js'), '--list'], { encoding: 'utf8' });
   assert.equal(r.status, 0);
   assert.match(r.stdout, /vscode\b/);
   assert.match(r.stdout, /VS Code Copilot \(user-scope\)/);
